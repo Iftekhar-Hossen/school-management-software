@@ -1,76 +1,134 @@
-import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import React, { useEffect } from "react";
+import { Routes, Route, json } from "react-router-dom";
 
-import ProtectedRoutes from './components/PrivateRoute'
-import PreventPublicRoute from './components/PreventPublicRoute'
+import ProtectedRoutes from "./components/PrivateRoute";
+import PreventPublicRoute from "./components/PreventPublicRoute";
 
-import PageLayout from './components/PageLayout'
+import PageLayout from "./components/PageLayout";
 
-import Dashboard from './pages/Dashboard'
-import Login from './pages/Login'
-import ResetPassword from './pages/ResetPassword'
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
+import PageNotFound from "./pages/PageNotFound";
+
+import AddStuff from "./pages/Administration/AddStuff";
+import StuffList from "./pages/Administration/StuffList";
+
+import Teachers from "./pages/Teachers";
+import Routine from "./pages/Teachers/Routine";
+import Result from "./pages/Teachers/Result";
+
+import Class from "./pages/Academic/Class";
+import GradeSystem from "./pages/Academic/GradeSystem";
+import Subject from "./pages/Academic/Subject";
+import Monitoring from "./pages/Academic/Monitoring";
+
+import AddStudent from "./pages/Academic/AddStudent";
+import Attendance from "./pages/Teachers/Attendance";
 
 
-import Teachers from './pages/Teachers'
-import AddTeacher from './pages/Teachers/add'
+import Account from "./pages/Students/Account";
+import StudentList from "./pages/Students/List";
+import CIS from "./pages/Students/CIS";
+import ExamRutine from"./pages/Students/ExamRutine"
 
-import Class from './pages/Academics/Class'
-import GradeSystem from './pages/Academics/GradeSystem'
+import Fees from "./pages/Account/Fees";
 
-import AddStudent from './pages/Students/add'
-
-
-import Fees from './pages/Accounting/Fees'
-
+import FeesType from "./pages/Account/FeesType";
+import Statement from "./pages/Account/Statement";
 
 
-
-import { ConfigProvider, Button } from 'antd';
-import FeesType from './pages/Accounting/FeesType'
+import { ConfigProvider } from "antd";
+import axios from "axios";
+import AccountType from "./pages/Account/Finance/AccountType";
+import ExpenseHead from "./pages/Account/Finance/ExpenseHead";
+import IncomeHead from "./pages/Account/Finance/IncomeHead";
+import CreateAccount from "./pages/Account/Finance/CreateAccount";
+import RecordIncome from "./pages/Account/Finance/RecordIncome";
+import RecordExpense from "./pages/Account/Finance/RecordExpense";
 
 export default function App() {
-  return (
-    <ConfigProvider
-    >
-      <Routes>
-        <Route path="/" element={<ProtectedRoutes />}>
-          <Route element={<PageLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path='teachers'>
-              <Route index element={<Teachers />} />
-              <Route path='add' element={<AddTeacher />} />
-            </Route>
-            <Route path='students'>
-              <Route index element={<Teachers />} />
-              <Route path='add' element={<AddStudent />} />
-            </Route>
-            <Route path='academics'>
-              <Route path='class' element={<Class />} />
-              <Route path='grading-system' element={<GradeSystem />} />
-            </Route>
-            <Route path='accounting'>
-              <Route path='pay-fees' element={<Fees />} />
-              <Route path='fees-type' element={<FeesType />} />
-            </Route>
-          </Route>
-        </Route>
-        <Route path='/login' element={<PreventPublicRoute />}>
-          <Route index element={<Login />} />
-        </Route>
+    useEffect(() => {
+        if (
+            localStorage.getItem("database") == null ||
+            localStorage.getItem("database") == undefined
+        ) {
+            axios.get("/data.json").then((res) => {
+                console.log(res.data);
+                localStorage.setItem("database", JSON.stringify(res.data));
+            });
+        }
+    }, []);
+    return (
+        <ConfigProvider>
+            <Routes>
+                <Route path="/" element={<ProtectedRoutes />}>
+                    <Route element={<PageLayout />}>
+                        <Route index element={<Dashboard />} />
 
-        <Route path='/reset-password' element={<PreventPublicRoute />}>
-          <Route index element={<ResetPassword />} />
-        </Route>
+                        <Route path="teachers">
+                            <Route index element={<Teachers />} />
+                            <Route path="routine" element={<Routine />} />
+                            <Route path="result" element={<Result />} />
+                            <Route path="attendance" element={<Attendance />} />
+                        </Route>
 
+                        <Route path="administration">
+                            <Route index element={<Teachers />} />
+                            <Route
+                                path="add-stuff"
+                                element={<AddStuff />}
+                            />
+                            <Route
+                                path="stuffs-list"
+                                element={<StuffList />}
+                            />
+                        </Route>
 
-      </Routes>
-    </ConfigProvider>
+                        <Route path="students">
+                            <Route path="account" element={<Account />} />
+                            <Route path="list" element={<StudentList />} />
+                        </Route>
 
-  )
+                        <Route path="academic">
+                            <Route path="class" element={<Class />} />
+                            <Route path="subject" element={<Subject />} />
+                            <Route path="monitoring" element={<Subject />} />
+                            <Route
+                                path="add-student"
+                                element={<AddStudent />}
+                            />
+                            <Route
+                                path="grading-system"
+                                element={<GradeSystem />}
+                            />
+                        </Route>
+
+                        <Route path="account">
+                            <Route path="pay-fees" element={<Fees />} />
+                            <Route path="fees-type" element={<FeesType />} />
+                            <Route path="statement" element={<Statement />} />
+                            <Route path="finance">
+                                <Route path="account-type" element={<AccountType />}/>
+                                <Route path="account" element={<CreateAccount />}/>
+                                <Route path="expense-head" element={<ExpenseHead />}/>
+                                <Route path="income-head" element={<IncomeHead />}/>
+                                <Route path="record-income" element={<RecordIncome />}/>
+                                <Route path="record-expense" element={<RecordExpense />}/>
+                            </Route>
+                        </Route>
+                    </Route>
+                </Route>
+                <Route path="/login" element={<PreventPublicRoute />}>
+                    <Route index element={<Login />} />
+                </Route>
+
+                <Route path="/reset-password" element={<PreventPublicRoute />}>
+                    <Route index element={<ResetPassword />} />
+                </Route>
+
+                <Route path="*" element={<PageNotFound />} />
+            </Routes>
+        </ConfigProvider>
+    );
 }
-
-
-/*
-
-
-*/

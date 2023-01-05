@@ -12,41 +12,7 @@ import {
     MailOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, theme, Button } from "antd";
-
-function getItem(label, key, icon, children, type) {
-    return {
-        key,
-        icon,
-        children,
-        label,
-        type,
-    };
-}
-let items = [
-    getItem(<Link to={"/"}>Dashboard</Link>, "dashboard", <MailOutlined />),
-    getItem("Students", "students", <AliwangwangOutlined />, [
-        getItem("Students List", "st1"),
-        getItem(<Link to={"/students/add"}>Add Teacher</Link>, "student2"),
-    ]),
-    getItem("Teachers", "teachers", <AppstoreOutlined />, [
-        getItem(<Link to={"/teachers"}>Teachers List</Link>, "teachers1"),
-        getItem(<Link to={"/teachers/add"}>Add Teacher</Link>, "teachers2"),
-    ]),
-    getItem("Academics", "academics", <AppstoreOutlined />, [
-        getItem(<Link to={"/academics/class"}>Class</Link>, "academics1"),
-        getItem(
-            <Link to={"/academics/grading-system"}>Grading system</Link>,
-            "academics2",
-        ),
-    ]),
-    getItem("Accounting", "accounting", <AppstoreOutlined />, [
-        getItem(<Link to={"/accounting/pay-fees"}>Fees</Link>, "accounting1"),
-        getItem(
-            <Link to={"/accounting/fees-type"}>Fees Type</Link>,
-            "accounting2",
-        ),
-    ]),
-];
+import Menubar from "./Menubar";
 
 const { Header, Sider, Content } = Layout;
 export default function PageLayout() {
@@ -61,23 +27,22 @@ export default function PageLayout() {
         <FullScreen handle={handle}>
             <Layout>
                 <Sider
+                    theme="dark"
+                    className="h-screen overflow-y-scroll"
                     collapsed={collapsed}
-                    className="relative bg-black"
-                    width={250}
+                    width={220}
                 >
-                    <Menu
-                        theme="dark"
-                        className="h-screen overflow-y-scroll"
-                        mode="inline"
-                        defaultSelectedKeys={["1"]}
-                        items={items}
-                    />
+                    <div className="text-center">
+                        <div className="text-center bg-white inline-block m-auto py-0 rounded-3xl px-5 text-black text-[26px] mb-3 font-sans font-bold mt-3">
+                            Logo
+                        </div>
+                    </div>
+                    <Menubar />
                 </Sider>
                 <Layout className="site-layout">
                     <Header
                         style={{
-                            padding: 0,
-                            background: colorBgContainer,
+                            height: "8vh",
                         }}
                     >
                         <Button
@@ -99,19 +64,17 @@ export default function PageLayout() {
                         {React.createElement(
                             collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
                             {
-                                className: "trigger",
+                                className: "trigger bg-white",
                                 onClick: () => setCollapsed(!collapsed),
                             },
                         )}
                     </Header>
                     <Content
                         style={{
-                            margin: "24px 16px",
-                            padding: 24,
-                            minHeight: 280,
-                            height: "100vh",
+                            height: "92vh",
                             overflowY: "scroll",
                         }}
+                        className="xs:p-4 sm:p-3 md:p-5 lg:p-5"
                     >
                         <Outlet />
                     </Content>

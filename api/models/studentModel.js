@@ -1,46 +1,83 @@
-const mongoose = require("mongoose")
-const Schema = mongoose.Schema
+const mongoose = require("mongoose");
 
-const studentSchema = new Schema({
-    studentId: {
+const StudentSchema = new mongoose.Schema({
+    name: {
         type: String,
-        required: true
+        required: true,
     },
+    dateOfBirth: {
+        type: Number,
+        required: true,
+    },
+    class: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Class",
+        },
+    ],
     email: {
         type: String,
-    },
-    fristName: {
-        type: String
-    }
-    ,
-    lastName: {
-        type: String
-    },
-    profilePicture: {
-        type: String
+        unique: true,
     },
     password: {
-        type: String
-    },
-    admitClass: {
         type: String,
-        section: String,
-        roll: Number,
-        year: Date,
+        required: true,
     },
-    currentClass: {
+    phone: {
         type: String,
-        section: String,
-        roll: Number,
-        year: Date,
+        required: true,
     },
-    
-},
-{
-    timestamps: true,
-}
-)
+    presentAddress: {
+        type: String,
+        required: true,
+    },
+    permanentAddress: {
+        type: String,
+        required: true,
+    },
 
-const studentModel = mongoose.model("Student", studentSchema)
+    image: {
+        type: String,
+    },
+    parents: {
+        father: {
+            name: {
+                type: String,
+                required: true,
+            },
+            email: {
+                type: String,
+            },
+            phone: {
+                type: String,
+                required: true,
+            },
+            occupation: {
+                type: String,
+            },
+        },
+        mother: {
+            name: {
+                type: String,
+                required: true,
+            },
+            email: {
+                type: String,
+            },
+            phone: {
+                type: String,
+                required: true,
+            },
+            occupation: {
+                type: String,
+                required: true,
+            },
+        },
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+});
 
-module.exports = studentModel
+module.exports = mongoose.model("Student", StudentSchema);

@@ -1,9 +1,9 @@
 const bcrypt = require("bcrypt");
-const saltRounds = process.env.SALTROUNDS;
+const saltRounds = process.env.SALT_ROUNDS;
 
 exports.hash = async (password) => {
-    if (password.trim().length > 8) {
-        let hash = await bcrypt.hash(password, saltRounds)
+    if (password.trim().length > 6) {
+        let hash = await bcrypt.hash(password, 9)
         return {
             message: "Password successfully encrypted",
             hash,
@@ -16,6 +16,8 @@ exports.hash = async (password) => {
         };
     }
 };
+
+
 
 exports.comparePassword = async (password, hashPassword) => {
     const passwordMatch = await bcrypt.compare(password, hashPassword);

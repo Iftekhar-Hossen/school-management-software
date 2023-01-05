@@ -1,34 +1,18 @@
-const mongoose = require("mongoose")
-const Schema = mongoose.Schema
+const mongoose = require("mongoose");
 
-
-const sessionTokenSchema = new Schema({
-    email: {
-        type: String
-    },
-    userId: {
-        type: String
-    },
-    profilePicture: {
-        type: String
-    },
-    firstName: {
-        type: String
-    },
-    lastName: {
-        type: String
-    },
+const schema = new mongoose.Schema({
     token: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    objectId: {
+        required: true,
         type: String
     },
-
-},
-    {
-        timestamps: true,
-    })
+    createdAt: Date
+});
+schema.index({ createdAt: 1 }, { expireAfterSeconds: 3600 });
 
 
-const sessionTokenModel = mongoose.model("sessionToken", sessionTokenSchema)
-
-module.exports = sessionTokenModel
-
+module.exports = mongoose.model("SessionToken", schema);

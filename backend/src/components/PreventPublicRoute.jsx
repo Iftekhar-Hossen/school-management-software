@@ -1,24 +1,20 @@
-import React from 'react';
+import React from "react";
 
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet } from "react-router-dom";
 
 const useAuth = () => {
-
-
-    // const data = localStorage.getItem('data')
-     const data = {auth: "asdf"}
+    const data = localStorage.getItem("data");
     if (data) {
-        return true
+        return true;
     } else {
-        return false
+        return false;
     }
-}
+};
 
 const PreventPublicRoute = (props) => {
+    const auth = useAuth();
 
-    const auth = useAuth()
-
-    return auth ? <Navigate to="/" /> : <Outlet />
-}
+    return auth ? <Navigate to="/" /> : <Outlet />;
+};
 
 export default PreventPublicRoute;

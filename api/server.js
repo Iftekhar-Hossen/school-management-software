@@ -21,7 +21,7 @@ readdirSync("./routes").map((f) => app.use("/", require("./routes/" + f)));
 
 // mongodb connection
 mongoose.set("strictQuery", false);
-mongoose.connect("mongodb+srv://admin:admin@school.l6qhhxy.mongodb.net/school?retryWrites=true&w=majority", () => {
+mongoose.connect(process.env.DATABASE, () => {
     console.log("Database connected.");
 });
 

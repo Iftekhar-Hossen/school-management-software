@@ -5,7 +5,7 @@ import { Navigate, Outlet } from 'react-router-dom'
 const useAuth = () => {
 
 
-    const data = {auth: "adf"}
+    const data = localStorage.getItem("data");
     if (data) {
         return true
     } else {
