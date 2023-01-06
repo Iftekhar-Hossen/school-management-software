@@ -22,71 +22,12 @@ const { Column } = Table;
 
 export default function Class() {
     let [dataSource, setDataSource] = useState(null);
-    let [teacher, setTeacher] = useState(null);
-    let [update, setUpdate] = useState(false);
-
     let [option, setOption] = useState(null);
-
-    useEffect(() => {
-        const items = JSON.parse(localStorage.getItem("database")).classList;
-        const teacherItem = JSON.parse(
-            localStorage.getItem("database"),
-        ).teachersList;
-
-        let newOptions = [];
-        teacherItem.map((data) => {
-            if (data.classTeacher != null) {
-                newOptions = [
-                    ...newOptions,
-                    { label: data.name, disabled: false, value: data.no },
-                ];
-            } else {
-                newOptions = [
-                    ...newOptions,
-                    { label: data.name, disabled: false, value: data.no },
-                ];
-            }
-        });
-        setOption(newOptions);
-
-        setDataSource(items);
-        setTeacher(teacherItem);
-
-        setUpdate(false);
-    }, [update]);
 
     const [form] = Form.useForm();
     console.log("old", dataSource);
     const onFinish = (values) => {
         console.log(values);
-
-        values.sections.map((data, index) => {
-            teacher.map((tdata, i) => {
-                if (tdata.no == data.teacher) {
-                    teacher[i] = {
-                        ...tdata,
-                        classTeacher: [dataSource.length + 1, index + 1],
-                    };
-                    setTeacher([...teacher]);
-                }
-            });
-        });
-
-        setDataSource([
-            ...dataSource,
-            { no: dataSource.length + 1, ...values },
-        ]);
-        console.log(dataSource);
-
-        let newData = JSON.parse(localStorage.getItem("database"));
-        newData.classList = dataSource;
-
-        let newTeacherData = JSON.parse(localStorage.getItem("database"));
-        newTeacherData.teachersList = teacher;
-
-        localStorage.setItem("database", JSON.stringify(newData));
-        localStorage.setItem("database", JSON.stringify(newTeacherData));
-        setUpdate(!update);
     };
 
     const handleChange = (value) => {

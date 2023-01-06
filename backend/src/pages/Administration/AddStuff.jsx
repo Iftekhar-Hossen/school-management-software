@@ -10,6 +10,8 @@ import {
     DatePicker,
     Card,
     Modal,
+    Select,
+    Tag,
 } from "antd";
 import PageTitle from "../../components/PageTitle";
 import axios from "axios";
@@ -19,17 +21,33 @@ import { useState } from "react";
 const { TextArea } = Input;
 
 export default function AddStuff() {
+    const [messageApi, contextHolder] = message.useMessage();
     const [form] = Form.useForm();
     const { auth } = useSelector((auth) => auth);
     const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const successApi = (message) => {
+        messageApi.open({
+            type: "success",
+            content: message,
+        });
+    };
+    const errorApi = (message) => {
+        messageApi.open({
+            type: "error",
+            content: message,
+        });
+    };
 
     const onFinish = (values) => {
+        console.log(values);
+        setLoading(true);
         axios
             .post(
-                `http://${window.location.hostname}:8000/v1/auth/add-admin`,
+                `http://localhost:8000/v1/admin/add-admin`,
                 {
                     ...values,
-                    role: "teacher",
                     dateOfBirth: values.dateOfBirth.$d,
                     joiningDate: values.dateOfBirth.$d,
                 },
@@ -40,23 +58,46 @@ export default function AddStuff() {
                 },
             )
             .then((res) => {
+                setLoading(false);
                 console.log(res);
                 setData(res.data.data);
-                alert(
-                    `You can login with phone number: ${res.data.data.phoneNumber} or administratorId: ${res.data.data.administratorId}`,
-                );
+                successApi("Stuff added successfully");
+                // alert(JSON.stringify(res.data.data));
             })
             .catch((error) => {
-                console.log(error);
+                setLoading(false);
+                // console.log(error);
+                errorApi(error.response.data.message);
             });
     };
 
     const onFinishFailed = () => {
         message.error("Submit failed!");
     };
+    const optionRender = (props) => {
+        const { label, value, color, closable, onClose } = props;
+        const onPreventMouseDown = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+        };
+        return (
+            <Tag
+                color={color}
+                onMouseDown={onPreventMouseDown}
+                closable={closable}
+                onClose={onClose}
+                style={{
+                    marginRight: 3,
+                }}
+            >
+                {label}
+            </Tag>
+        );
+    };
 
     return (
         <div>
+            {contextHolder}
             <Form
                 form={form}
                 layout="vertical"
@@ -151,8 +192,10 @@ export default function AddStuff() {
                                             ]}
                                         >
                                             <DatePicker
+                                                timeZone="Asia/Dhaka"
                                                 className="w-full"
                                                 placeholder="2000-12-13"
+                                                format="YYYY-MM-DD"
                                             />
                                         </Form.Item>
                                     </Col>
@@ -203,8 +246,10 @@ export default function AddStuff() {
                                             ]}
                                         >
                                             <DatePicker
+                                                timeZone="Asia/Dhaka"
                                                 className="w-full"
                                                 placeholder={"2022-12-07"}
+                                                format="YYYY-MM-DD"
                                             />
                                         </Form.Item>
                                     </Col>
@@ -264,24 +309,6 @@ export default function AddStuff() {
                                 <Row gutter={16}>
                                     <Col sm={24} md={12} lg={12}>
                                         <Form.Item
-                                            name={"bankAccountName"}
-                                            label="Bank account name"
-                                        >
-                                            <Input placeholder="Md. Rabul" />
-                                        </Form.Item>
-                                    </Col>
-
-                                    <Col sm={24} md={12} lg={12}>
-                                        <Form.Item
-                                            name={"bankAccountNumber"}
-                                            label="Bank account no"
-                                        >
-                                            <Input placeholder="Md. Rabul" />
-                                        </Form.Item>
-                                    </Col>
-
-                                    <Col sm={24} md={12} lg={12}>
-                                        <Form.Item
                                             name={"bankName"}
                                             label="Bank name"
                                         >
@@ -293,6 +320,23 @@ export default function AddStuff() {
                                             name={"bankBranchName"}
                                             label="Bank branch name"
                                             tooltip="This is a required field"
+                                        >
+                                            <Input placeholder="Md. Rabul" />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col sm={24} md={12} lg={12}>
+                                        <Form.Item
+                                            name={"bankAccountName"}
+                                            label="Bank account name"
+                                        >
+                                            <Input placeholder="Md. Rabul" />
+                                        </Form.Item>
+                                    </Col>
+
+                                    <Col sm={24} md={12} lg={12}>
+                                        <Form.Item
+                                            name={"bankAccountNumber"}
+                                            label="Bank account no"
                                         >
                                             <Input placeholder="Md. Rabul" />
                                         </Form.Item>
@@ -340,28 +384,57 @@ export default function AddStuff() {
                                             name={"email"}
                                             label="Email Address"
                                             tooltip="This is not a required field."
+                                            required
+                                            rules={[
+                                                {
+                                                    type: "email",
+                                                    required: true,
+                                                    message:
+                                                        "Email is required",
+                                                },
+                                            ]}
                                         >
                                             <Input placeholder="Md. Rabul" />
                                         </Form.Item>
                                     </Col>
                                     <Col sm={24} md={24} lg={24}>
                                         <Form.Item
-                                            name={"password"}
-                                            label="Password"
-                                            tooltip="This is a required field."
+                                            name={"role"}
+                                            label="Select Role"
+                                            tooltip="This is not a required field."
                                             required
                                             rules={[
                                                 {
                                                     required: true,
-                                                    type: "string",
                                                     message:
-                                                        "Password is required",
+                                                        "Email is required",
                                                 },
                                             ]}
                                         >
-                                            <Input
-                                                type="password"
-                                                placeholder="Md. Rabul"
+                                            <Select
+                                                mode="multiple"
+                                                showArrow
+                                                tagRender={optionRender}
+                                                style={{
+                                                    width: "100%",
+                                                }}
+                                                options={[
+                                                    {
+                                                        color: "green",
+                                                        value: "teacher",
+                                                        label: "Teacher",
+                                                    },
+                                                    {
+                                                        color: "yellowgreen",
+                                                        value: "accountant",
+                                                        label: "Accountant",
+                                                    },
+                                                    {
+                                                        color: "red",
+                                                        value: "admin",
+                                                        label: "Admin",
+                                                    },
+                                                ]}
                                             />
                                         </Form.Item>
                                     </Col>
@@ -369,6 +442,7 @@ export default function AddStuff() {
                                     <Col sm={24} md={24} lg={24}>
                                         <Form.Item>
                                             <Button
+                                                loading={loading}
                                                 type="primary"
                                                 className="bg-[#1677ff]"
                                                 htmlType="submit"

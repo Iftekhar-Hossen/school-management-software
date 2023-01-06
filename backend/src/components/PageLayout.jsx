@@ -17,7 +17,9 @@ import Menubar from "./Menubar";
 const { Header, Sider, Content } = Layout;
 export default function PageLayout() {
     const handle = useFullScreenHandle();
-
+const resetWebsite = ()=>{
+    localStorage.clear()
+}
     console.log(handle);
     const [collapsed, setCollapsed] = useState(false);
     const {
@@ -60,6 +62,9 @@ export default function PageLayout() {
                                 )
                             }
                         />
+
+                        <Button type="primary"
+                            className="bg-blue-600" onClick={resetWebsite}>Reset</Button>
 
                         {React.createElement(
                             collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,

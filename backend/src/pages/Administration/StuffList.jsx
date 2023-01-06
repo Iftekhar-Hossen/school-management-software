@@ -1,42 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Space, Table, Tag, Row, Col } from "antd";
 import PageTitle from "../../components/PageTitle";
+import axios from "axios";
+import { useSelector } from "react-redux";
+
 const columns = [
     {
-        title: "Name",
-        dataIndex: "name",
-        key: "name",
-        render: (text) => <a>{text}</a>,
+        title: "Full Name",
+        key: "firstName",
+        render: (_, record) => record.firstName + " " + record.lastName,
+    },
+    {
+        title: "Email",
+        dataIndex: "email",
+        key: "email",
     },
     {
         title: "Phone",
-        dataIndex: "phone",
+        dataIndex: "phoneNumber",
         key: "phone",
     },
     {
         title: "Address",
-        dataIndex: "address",
-        key: "address",
+        dataIndex: "presentAddress",
+        key: "presentAddress",
     },
     {
         title: "Role",
         key: "role",
         dataIndex: "role",
-        render: (_, { tags }) => (
-            <>
-                {tags.map((tag) => {
-                    let color = tag.length > 5 ? "geekblue" : "green";
-                    if (tag === "loser") {
-                        color = "volcano";
-                    }
-                    return (
-                        <Tag color={color} key={tag}>
-                            {tag.toUpperCase()}
-                        </Tag>
-                    );
-                })}
-            </>
-        ),
+        render: (_, record) =>
+            record.role.map((role) => <Tag color="success">{role}</Tag>),
     },
     {
         title: "Action",
@@ -48,38 +42,41 @@ const columns = [
         ),
     },
 ];
-const data = [
-    {
-        key: "1",
-        name: "John Brown",
-        phone: "01533501236",
-        address: "New York No. 1 Lake Park",
-        tags: ["Teacher"],
-    },
-    {
-        key: "2",
-        name: "Jim Green",
-        phone: "01533501236",
-        address: "London No. 1 Lake Park",
-        tags: ["Head Teacher", "Super Admin"],
-    },
-    {
-        key: "3",
-        name: "Joe Black",
-        phone: "01533501236",
-        address: "Sidney No. 1 Lake Park",
-        tags: ["Admin", "Accountant"],
-    },
-];
 
 export default function StuffList() {
+    const [dataSource, setDataSource] = useState([]);
+    const { auth } = useSelector((auth) => auth);
+    useEffect(() => {
+        axios
+            .get(`http://localhost:8000/v1/admin/admin-list`, {
+                headers: {
+                    token: auth.token,
+                },
+            })
+            .then((res) => {
+                setDataSource(res.data.data);
+                // setDataSource([res.data.data]);
+            })
+            .catch((error) => {
+                // console.log(error);
+            });
+    }, []);
     return (
         <Row>
             <Col xs={24} sm={24} md={24} lg={24}>
                 <PageTitle title="Stuffs List" />
             </Col>
             <Col xs={24} sm={24} md={24} lg={24}>
-                <Table bordered={true} pagination={false} columns={columns} dataSource={data} />;
+                <Table
+                    size="small"
+                    bordered={true}
+                    pagination={false}
+                    columns={columns}
+                    dataSource={dataSource}
+                    scroll={{
+                        x: "calc(700px + 50%)",
+                    }}
+                />
             </Col>
         </Row>
     );

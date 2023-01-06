@@ -1,14 +1,5 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom";
-import {
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    AliwangwangOutlined,
-    FullscreenExitOutlined,
-    FullscreenOutlined,
-    AppstoreOutlined,
-    MailOutlined,
-} from "@ant-design/icons";
 
 import { Layout, Menu, theme, Button } from "antd";
 
@@ -129,34 +120,55 @@ let items = [
             getItem(<Link to={"/teachers/result"}>Result</Link>, "teacher3"),
         ],
     ),
-    getItem("Academics", "academic", <AppstoreOutlined />, [
-        getItem(
-            <Link to={"/academic/add-student"}>Add Student</Link>,
-            "academic1",
-        ),
-        getItem(<Link to={"/academic/class"}>Add Class</Link>, "academic2"),
-        getItem(
-            <Link to={"/academic/monitoring"}>Monitoring</Link>,
-            "academic3",
-        ),
-        getItem(
-            <Link to={"/academic/grading-system"}>Grading system</Link>,
-            "academic4",
-        ),
-    ]),
+    getItem(
+        "Academics",
+        "academic",
+        <svg
+            t="1672896518954"
+            className="icon scale-[1.3]"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="12651"
+            data-spm-anchor-id="a313x.7781069.0.i2"
+            width="14"
+            height="14"
+        >
+            <path
+                d="M464 144H160c-8.8 0-16 7.2-16 16v304c0 8.8 7.2 16 16 16h304c8.8 0 16-7.2 16-16V160c0-8.8-7.2-16-16-16z m-52 268H212V212h200v200zM864 144H560c-8.8 0-16 7.2-16 16v304c0 8.8 7.2 16 16 16h304c8.8 0 16-7.2 16-16V160c0-8.8-7.2-16-16-16z m-52 268H612V212h200v200zM464 544H160c-8.8 0-16 7.2-16 16v304c0 8.8 7.2 16 16 16h304c8.8 0 16-7.2 16-16V560c0-8.8-7.2-16-16-16z m-52 268H212V612h200v200zM864 544H560c-8.8 0-16 7.2-16 16v304c0 8.8 7.2 16 16 16h304c8.8 0 16-7.2 16-16V560c0-8.8-7.2-16-16-16z m-52 268H612V612h200v200z"
+                p-id="3419"
+                fill="#fff"
+            ></path>
+        </svg>,
+        [
+            getItem(
+                <Link to={"/academic/add-student"}>Add Student</Link>,
+                "academic1",
+            ),
+            getItem(<Link to={"/academic/class"}>Add Class</Link>, "academic2"),
+            getItem(
+                <Link to={"/academic/monitoring"}>Monitoring</Link>,
+                "academic3",
+            ),
+            getItem(
+                <Link to={"/academic/grading-system"}>Grading system</Link>,
+                "academic4",
+            ),
+        ],
+    ),
     getItem(
         "Accounts",
         "account",
         <svg
-        t="1672896518954"
-        className="icon scale-[1.3]"
-        viewBox="0 0 1024 1024"
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-        p-id="12651"
-        data-spm-anchor-id="a313x.7781069.0.i2"
-        width="14"
-        height="14"
+            t="1672896518954"
+            className="icon scale-[1.3]"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="12651"
+            data-spm-anchor-id="a313x.7781069.0.i2"
+            width="14"
+            height="14"
         >
             <path
                 d="M565.8 489.5c24.9 9 40.4 4.2 45.2 2.4 15.2-10 20.5-70 1.8-79.6-6-7.3-51.2-8.4-56.1-2.4 4.2-2.4 2.8-33.6 0-36.2-13.7-12.8-44.6-13.9-59.1 0-4.2 2.4-6.6 33.2 0 37.4-44.6 16.3-73.5 50.7-77.2 61.5-7.2 6.6-25.9 51.9 0 91.6 25.9 39.8 116.3 71.1 133.8 83.2s13.9 66.3 0 69.9c-3 8.4-73.5 10.9-107.3 4.8 0.6-20.5 0-13.3-4.2-21.7-4.2-8.5-45.2-6.7-51.2 0-6 6.6-10.2 65 0.6 72.3 16.3 10.2 98.3-2.4 103.1 3.6 4.8 6-8.4 39.8 0 49.4 8.4 9.7 53.6 8.5 60.3 0 6.6-8.4-4.2-42.2 0-48.2s18.1-2.4 33.8-4.8c15.7-2.4 31.3-19.3 39.8-34.9 8.4-15.7 7.8-78.3 0-95.2-7.8-16.9-36.8-40.4-54.3-54.3-17.5-13.9-56.1-35.5-86.8-44.6-10.9-15.1-6.6-48.7 0-59.1 20.2-31.6 48.7-10.1 77.8 4.9z"

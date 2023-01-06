@@ -1,23 +1,22 @@
-import React from 'react';
+import React from "react";
+import { useSelector } from "react-redux";
 
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet } from "react-router-dom";
 
 const useAuth = () => {
-
-
-    const data = localStorage.getItem("data");
-    if (data) {
-        return true
+    const { auth } = useSelector((auth) => auth);
+    console.log(auth);
+    if (auth != null) {
+        return true;
     } else {
-        return false
+        return false;
     }
-}
+};
 
-const ProtectedRoutes = (props) => {
+const ProtectedRoutes = () => {
+    const auth = useAuth();
 
-    const auth = useAuth()
-
-    return auth ? <Outlet /> : <Navigate to="/login" />
-}
+    return auth ? <Outlet /> : <Navigate to="/login" />;
+};
 
 export default ProtectedRoutes;

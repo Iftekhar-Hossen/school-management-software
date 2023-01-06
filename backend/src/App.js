@@ -21,22 +21,20 @@ import Result from "./pages/Teachers/Result";
 import Class from "./pages/Academic/Class";
 import GradeSystem from "./pages/Academic/GradeSystem";
 import Subject from "./pages/Academic/Subject";
-import Monitoring from "./pages/Academic/Monitoring";
+// import Monitoring from "./pages/Academic/Monitoring";
 
 import AddStudent from "./pages/Academic/AddStudent";
 import Attendance from "./pages/Teachers/Attendance";
 
-
 import Account from "./pages/Students/Account";
 import StudentList from "./pages/Students/List";
-import CIS from "./pages/Students/CIS";
-import ExamRutine from"./pages/Students/ExamRutine"
+// import CIS from "./pages/Students/CIS";
+// import ExamRoutine from"./pages/Students/ExamRoutine"
 
 import Fees from "./pages/Account/Fees";
 
 import FeesType from "./pages/Account/FeesType";
 import Statement from "./pages/Account/Statement";
-
 
 import { ConfigProvider } from "antd";
 import axios from "axios";
@@ -46,20 +44,14 @@ import IncomeHead from "./pages/Account/Finance/IncomeHead";
 import CreateAccount from "./pages/Account/Finance/CreateAccount";
 import RecordIncome from "./pages/Account/Finance/RecordIncome";
 import RecordExpense from "./pages/Account/Finance/RecordExpense";
+import { useSelector } from "react-redux";
+import 'dayjs/locale/bn-bd';
 
 export default function App() {
-    useEffect(() => {
-        if (
-            localStorage.getItem("database") == null ||
-            localStorage.getItem("database") == undefined
-        ) {
-            axios.get("/data.json").then((res) => {
-                console.log(res.data);
-                localStorage.setItem("database", JSON.stringify(res.data));
-            });
-        }
-    }, []);
+    const {auth} = useSelector((auth) => auth);
+    console.log(auth)
     return (
+
         <ConfigProvider>
             <Routes>
                 <Route path="/" element={<ProtectedRoutes />}>
@@ -75,14 +67,8 @@ export default function App() {
 
                         <Route path="administration">
                             <Route index element={<Teachers />} />
-                            <Route
-                                path="add-stuff"
-                                element={<AddStuff />}
-                            />
-                            <Route
-                                path="stuffs-list"
-                                element={<StuffList />}
-                            />
+                            <Route path="add-stuff" element={<AddStuff />} />
+                            <Route path="stuffs-list" element={<StuffList />} />
                         </Route>
 
                         <Route path="students">
@@ -109,12 +95,30 @@ export default function App() {
                             <Route path="fees-type" element={<FeesType />} />
                             <Route path="statement" element={<Statement />} />
                             <Route path="finance">
-                                <Route path="account-type" element={<AccountType />}/>
-                                <Route path="account" element={<CreateAccount />}/>
-                                <Route path="expense-head" element={<ExpenseHead />}/>
-                                <Route path="income-head" element={<IncomeHead />}/>
-                                <Route path="record-income" element={<RecordIncome />}/>
-                                <Route path="record-expense" element={<RecordExpense />}/>
+                                <Route
+                                    path="account-type"
+                                    element={<AccountType />}
+                                />
+                                <Route
+                                    path="account"
+                                    element={<CreateAccount />}
+                                />
+                                <Route
+                                    path="expense-head"
+                                    element={<ExpenseHead />}
+                                />
+                                <Route
+                                    path="income-head"
+                                    element={<IncomeHead />}
+                                />
+                                <Route
+                                    path="record-income"
+                                    element={<RecordIncome />}
+                                />
+                                <Route
+                                    path="record-expense"
+                                    element={<RecordExpense />}
+                                />
                             </Route>
                         </Route>
                     </Route>

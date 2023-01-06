@@ -6,6 +6,9 @@ var Administrator = new Schema(
             type: String,
             match: /.+\@.+\..+/,
             unique: [true, "Email is already existed"],
+            index: true,
+            lowercase: true,
+            trim: true,
         },
         password: {
             type: String,
@@ -20,7 +23,7 @@ var Administrator = new Schema(
             required: true,
         },
         role: {
-            type: String,
+            type: [String],
             required: true,
             enum: ["super_admin", "admin", "teacher", "liberian", "accountant"],
         },
@@ -31,8 +34,7 @@ var Administrator = new Schema(
         },
         profilePicture: {
             type: String,
-            default:
-                "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80",
+            default: "https://img.icons8.com/ios-glyphs/256/user.png",
         },
         dateOfBirth: {
             type: Date,

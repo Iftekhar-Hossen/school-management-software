@@ -31,45 +31,27 @@ const Login = () => {
     const [error, setError] = useState(null);
     const dispatch = useDispatch();
     const onFinish = (values) => {
-        if (
-            values.emailPhoneAdministratorId == "codethousandit@gmail.com" ||
-            (values.emailPhoneAdministratorId == "20231" &&
-                values.password == "123456789")
-        ) {
-            dispatch(
-                loginAction({
-                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNvZGV0aG91c2FuZGl0QGdtYWlsLmNvbSIsImlkIjoiNjNiMTQxNTY0OWIyZjFkMzBlZGE4YmUzIiwiaWF0IjoxNjcyNTcwNDUzLCJleHAiOjE2NzI1ODg0NTN9.QuLjxhH0ROFVxeQ0NET3AeNL3LtzsqXdp5d6di82Ii4",
-                    email: "codethousandit@gmail.com",
-                    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80",
-                    firstName: "Code",
-                    lastName: "Thousand",
-                    remember: true,
-                }),
-            );
-            return navigate("/");
-        } else {
-            errorAlert();
-        }
-
-        // axios
-        //     .post(
-        //         `http://${window.location.hostname}:8000/v1/auth/login`,
-        //         values,
-        //     )
-        //     .then((res) => {
-        //         setError("");
-        //         dispatch(
-        //             loginAction({
-        //                 ...res.data.data,
-        //                 remember: values.remember,
-        //             }),
-        //         );
-        //         return navigate("/");
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //         setError(error.response.data.message);
-        //     });
+        errorAlert()
+        axios
+            .post(
+                `http://${window.location.hostname}:8000/v1/auth/login`,
+                values,
+            )
+            .then((res) => {
+                console.log(res);
+                setError("");
+                dispatch(
+                    loginAction({
+                        ...res.data.data,
+                        remember: values.remember,
+                    }),
+                );
+                return navigate("/");
+            })
+            .catch((error) => {
+                console.log(error);
+                setError(error.response.data.message);
+            });
     };
 
     return (
