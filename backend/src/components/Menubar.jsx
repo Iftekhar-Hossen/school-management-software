@@ -154,6 +154,7 @@ let items = [
                 <Link to={"/academic/grading-system"}>Grading system</Link>,
                 "academic4",
             ),
+            getItem(<Link to={"/academic/session"}>Session</Link>, "academic5"),
         ],
     ),
     getItem(

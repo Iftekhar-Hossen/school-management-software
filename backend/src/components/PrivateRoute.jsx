@@ -5,7 +5,6 @@ import { Navigate, Outlet } from "react-router-dom";
 
 const useAuth = () => {
     const { auth } = useSelector((auth) => auth);
-    console.log(auth);
     if (auth != null) {
         return true;
     } else {

@@ -46,10 +46,10 @@ import RecordIncome from "./pages/Account/Finance/RecordIncome";
 import RecordExpense from "./pages/Account/Finance/RecordExpense";
 import { useSelector } from "react-redux";
 import 'dayjs/locale/bn-bd';
+import Session from "./pages/Academic/Session";
 
 export default function App() {
-    const {auth} = useSelector((auth) => auth);
-    console.log(auth)
+
     return (
 
         <ConfigProvider>
@@ -80,6 +80,7 @@ export default function App() {
                             <Route path="class" element={<Class />} />
                             <Route path="subject" element={<Subject />} />
                             <Route path="monitoring" element={<Subject />} />
+                            <Route path="session" element={<Session />} />
                             <Route
                                 path="add-student"
                                 element={<AddStudent />}

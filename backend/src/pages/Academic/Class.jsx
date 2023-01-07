@@ -11,41 +11,127 @@ import {
     Alert,
     Table,
     List,
+    message,
 } from "antd";
 import { v4 } from "uuid";
-
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-
 import axios from "axios";
 import { useSelector } from "react-redux";
 const { Column } = Table;
 
-export default function Class() {
-    let [dataSource, setDataSource] = useState(null);
-    let [option, setOption] = useState(null);
+const columns = [
+    {
+        title: "Class Name",
+        dataIndex: "name",
+        key: "name",
+    },
+    {
+        title: "Section(s)",
+        dataIndex: "sections",
+        render: (data) => (
+            <List>
+                {data.map((sec) => (
+                    <List.Item>{sec.name}</List.Item>
+                ))}
+            </List>
+        ),
+    },
+    {
+        title: "Total Student(s)",
+        dataIndex: "sections",
+        render: (data) => (
+            <List>
+                {data.map((sec) => (
+                    <List.Item>{sec.capacity}</List.Item>
+                ))}
+            </List>
+        ),
+    },
+];
 
+export default function Class() {
+    const [messageApi, contextHolder] = message.useMessage();
     const [form] = Form.useForm();
-    console.log("old", dataSource);
+    const { auth } = useSelector((auth) => auth);
+    const [sessions, setSessions] = useState(null);
+    const [update, setUpdate] = useState(false);
+    const [classes, setClasses] = useState(null);
+    const [lastSession, setLastSession] = useState("");
+
+    useEffect(() => {
+        axios
+            .get("http://localhost:8000/v1/academic/session", {
+                headers: {
+                    token: auth.token,
+                },
+            })
+            .then((res) => {
+                const updatedObjects = res.data.data.map((obj) => {
+                    return { value: obj._id, label: obj.name };
+                });
+                setSessions(updatedObjects);
+                setLastSession(updatedObjects[updatedObjects.length - 1].value);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
+    useEffect(() => {
+        var data = "";
+        var config = {
+            method: "get",
+            url: `http://localhost:8000/v1/academic/class?session=${lastSession}`,
+            headers: {
+                token: auth.token,
+            },
+            data: data,
+        };
+
+        axios(config)
+            .then((res) => {
+                setClasses(res.data.data);
+            })
+            .catch((error) => {
+                messageAlert(false, error.response.data.message);
+            });
+    }, [update, lastSession]);
+
     const onFinish = (values) => {
         console.log(values);
+        axios
+            .post("http://localhost:8000/v1/academic/class", values, {
+                headers: {
+                    token: auth.token,
+                },
+            })
+            .then((res) => {
+                messageAlert(true, "Successfully added");
+                setUpdate(!update);
+                form.resetFields();
+            })
+            .catch((error) => {
+                messageAlert(false, error.response.data.message);
+            });
     };
 
-    const handleChange = (value) => {
-        console.log(value);
-        let newOptions = [];
-        option.map((data) => {
-            console.log(data);
+    const messageAlert = (status, message) => {
+        messageApi.open({
+            type: status ? "success" : "error",
+            content: message,
         });
     };
 
     return (
         <Row gutter={[16, 16]}>
+            {contextHolder}
             <Col xs={24} sm={24} md={10} lg={10}>
                 <Form
-                    name="dynamic_form_nest_item"
+                    initialValues={{ name: "", sections: null }}
+                    name="classForm"
                     onFinish={onFinish}
                     autoComplete="off"
                     layout="vertical"
+                    form={form}
                 >
                     <Card title="Add Class" bodyStyle={{ paddingBottom: 0 }}>
                         <Form.Item
@@ -58,7 +144,25 @@ export default function Class() {
                                 },
                             ]}
                         >
-                            <Input placeholder="input placeholder" />
+                            <Select
+                                style={{
+                                    width: 120,
+                                }}
+                                onChange={(data) => console.log(data)}
+                                options={sessions}
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            name="name"
+                            label="Class name"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Class name is required",
+                                },
+                            ]}
+                        >
+                            <Input placeholder="Enter class name" />
                         </Form.Item>
                         <Form.List
                             name="sections"
@@ -105,7 +209,7 @@ export default function Class() {
                                                 </Form.Item>
                                                 <Form.Item
                                                     {...restField}
-                                                    name={[name, "total"]}
+                                                    name={[name, "capacity"]}
                                                     rules={[
                                                         {
                                                             required: true,
@@ -121,9 +225,12 @@ export default function Class() {
                                                     />
                                                 </Form.Item>
 
-                                                <MinusCircleOutlined
+                                                <Button
+                                                    shape="circle"
                                                     onClick={() => remove(name)}
-                                                />
+                                                >
+                                                    -
+                                                </Button>
                                             </Space>
                                         ),
                                     )}
@@ -136,9 +243,8 @@ export default function Class() {
                                                 console.log(fields);
                                             }}
                                             block
-                                            icon={<PlusOutlined />}
                                         >
-                                            Add Section(s)
+                                            + Add Section(s)
                                         </Button>
                                     </Form.Item>
 
@@ -163,32 +269,27 @@ export default function Class() {
                 </Form>
             </Col>
             <Col xs={24} sm={24} md={12} lg={14}>
-                <Card title="Class List">
+                <Card
+                    title={
+                        <>
+                            <h3 className="inline-block mr-3">Class list of</h3>
+                            <Select
+                                style={{
+                                    width: 120,
+                                }}
+                                onChange={(data) => console.log(data)}
+                                options={sessions}
+                            />
+                        </>
+                    }
+                >
                     <Table
                         size="small"
                         bordered
-                        dataSource={dataSource}
+                        dataSource={classes}
                         pagination={false}
-                    >
-                        <Column title="#" dataIndex="no" key={v4()} />
-                        <Column
-                            title="Class Name"
-                            dataIndex="name"
-                            key={v4()}
-                        />
-                        <Column
-                            title="Sections"
-                            dataIndex="sections"
-                            render={(data) => (
-                                <List>
-                                    {data.map((sec) => (
-                                        <List.Item>{sec.name}</List.Item>
-                                    ))}
-                                </List>
-                            )}
-                            key={v4()}
-                        />
-                    </Table>
+                        columns={columns}
+                    />
                 </Card>
             </Col>
         </Row>

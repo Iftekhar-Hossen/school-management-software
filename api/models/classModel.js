@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
+const SessionSchema = require("./sessionModel")
 
 const ClassSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
+    session: {
+                type: mongoose.Schema.Types.ObjectId, 
+                ref: 'Session'
     },
-    subject: {
+    name: {
         type: String,
         required: true,
     },
@@ -31,10 +32,8 @@ const ClassSchema = new mongoose.Schema({
             },
         },
     ],
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
+}, {
+    timestamps: true
 });
 
 module.exports = mongoose.model("Class", ClassSchema)
