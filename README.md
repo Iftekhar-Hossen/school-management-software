@@ -8,6 +8,7 @@ Success Response JSON : {
     status: 200,
     
 }
+mongodb+srv://admin:admin@school.l6qhhxy.mongodb.net/school?retryWrites=true&w=majority
 
 <!-- https://medium.com/@bojanmajed/standard-json-api-response-format-c6c1aabcaa6d -->
 
