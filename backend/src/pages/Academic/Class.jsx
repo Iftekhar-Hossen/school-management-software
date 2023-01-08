@@ -52,10 +52,10 @@ export default function Class() {
     const [messageApi, contextHolder] = message.useMessage();
     const [form] = Form.useForm();
     const { auth } = useSelector((auth) => auth);
-    const [sessions, setSessions] = useState(null);
     const [update, setUpdate] = useState(false);
     const [classes, setClasses] = useState(null);
-    const [lastSession, setLastSession] = useState("");
+    const [sessions, setSessions] = useState(null);
+    const [lastSession, setLastSession] = useState(null);
 
     useEffect(() => {
         axios
@@ -68,6 +68,7 @@ export default function Class() {
                 const updatedObjects = res.data.data.map((obj) => {
                     return { value: obj._id, label: obj.name };
                 });
+                console.log(updatedObjects);
                 setSessions(updatedObjects);
                 setLastSession(updatedObjects[updatedObjects.length - 1].value);
             })
@@ -77,24 +78,27 @@ export default function Class() {
     }, []);
 
     useEffect(() => {
-        var data = "";
-        var config = {
-            method: "get",
-            url: `http://localhost:8000/v1/academic/class?session=${lastSession}`,
-            headers: {
-                token: auth.token,
-            },
-            data: data,
-        };
+        if (typeof lastSession == "string") {
+            var data = "";
+            var config = {
+                method: "get",
+                url: `http://localhost:8000/v1/academic/class?session=${lastSession}`,
+                headers: {
+                    token: auth.token,
+                },
+                data: data,
+            };
 
-        axios(config)
-            .then((res) => {
-                setClasses(res.data.data);
-            })
-            .catch((error) => {
-                messageAlert(false, error.response.data.message);
-            });
-    }, [update, lastSession]);
+            axios(config)
+                .then((res) => {
+                    setClasses(res.data.data);
+                    console.log(res.data.data);
+                })
+                .catch((error) => {
+                    messageAlert(false, error.response.data.message);
+                });
+        }
+    }, [lastSession, update]);
 
     const onFinish = (values) => {
         console.log(values);
@@ -126,7 +130,7 @@ export default function Class() {
             {contextHolder}
             <Col xs={24} sm={24} md={10} lg={10}>
                 <Form
-                    initialValues={{ name: "", sections: null }}
+                    initialValues={{ session: "", name: "", sections: null }}
                     name="classForm"
                     onFinish={onFinish}
                     autoComplete="off"
@@ -135,8 +139,8 @@ export default function Class() {
                 >
                     <Card title="Add Class" bodyStyle={{ paddingBottom: 0 }}>
                         <Form.Item
-                            name="name"
-                            label="Class name"
+                            name="session"
+                            label="Session"
                             rules={[
                                 {
                                     required: true,
@@ -144,13 +148,15 @@ export default function Class() {
                                 },
                             ]}
                         >
-                            <Select
-                                style={{
-                                    width: 120,
-                                }}
-                                onChange={(data) => console.log(data)}
-                                options={sessions}
-                            />
+                            {sessions && (
+                                <Select
+                                    style={{
+                                        width: 120,
+                                    }}
+                                    options={sessions}
+                                    defaultValue={sessions[sessions.length - 1]}
+                                />
+                            )}
                         </Form.Item>
                         <Form.Item
                             name="name"
@@ -273,22 +279,25 @@ export default function Class() {
                     title={
                         <>
                             <h3 className="inline-block mr-3">Class list of</h3>
-                            <Select
-                                style={{
-                                    width: 120,
-                                }}
-                                onChange={(data) => console.log(data)}
-                                options={sessions}
-                            />
+                            {sessions && (
+                                <Select
+                                    style={{
+                                        width: 120,
+                                    }}
+                                    onChange={(data) => setLastSession(data)}
+                                    options={sessions}
+                                    defaultValue={sessions[sessions.length - 1]}
+                                />
+                            )}
                         </>
                     }
                 >
                     <Table
                         size="small"
                         bordered
-                        dataSource={classes}
                         pagination={false}
                         columns={columns}
+                        dataSource={classes}
                     />
                 </Card>
             </Col>

@@ -3,8 +3,8 @@ const SessionSchema = require("./sessionModel")
 
 const ClassSchema = new mongoose.Schema({
     session: {
-                type: mongoose.Schema.Types.ObjectId, 
-                ref: 'Session'
+               type: String,
+               required: [true, "Session id is required"]
     },
     name: {
         type: String,
@@ -30,10 +30,21 @@ const ClassSchema = new mongoose.Schema({
                 type: Number,
                 default: 0,
             },
+            currentStudents:{
+                type: Number,
+
+            }
         },
     ],
 }, {
     timestamps: true
 });
+
+ClassSchema.pre('save', function(next) {
+  this.currentStudents = this.students.length;
+  this.markModified('students');
+  next();
+});
+
 
 module.exports = mongoose.model("Class", ClassSchema)

@@ -13,9 +13,10 @@ import {
     DatePicker,
     message,
 } from "antd";
+import { sessionAction } from "../../app/actions/session";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
@@ -44,13 +45,13 @@ const columns = [
     },
 ];
 
-
 export default function Session() {
     const [messageApi, contextHolder] = message.useMessage();
     const [form] = Form.useForm();
     const { auth } = useSelector((auth) => auth);
     const [update, setUpdate] = useState(false);
     const [sessions, setSessions] = useState(null);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         axios
@@ -61,9 +62,18 @@ export default function Session() {
             })
             .then((res) => {
                 setSessions(res.data.data);
+                const updatedObjects = res.data.data.map((obj) => {
+                    return { value: obj._id, label: obj.name };
+                });
+                dispatch(sessionAction(updatedObjects));
             })
             .catch((error) => {
-                messageAlert(false, error.response.data.message);
+                console.log(
+                    "🚀 ~ file: Session.jsx:66 ~ useEffect ~ error",
+                    error,
+                );
+
+                // messageAlert(false, error.response.data.message);
             });
     }, [update]);
 
@@ -80,12 +90,13 @@ export default function Session() {
                 },
             })
             .then((res) => {
-                messageAlert(true,"Successfully added")
+                messageAlert(true, "Successfully added");
                 setUpdate(!update);
                 form.resetFields();
-            }).catch((error)=>{
-                messageAlert(false, error.response.data.message)
             })
+            .catch((error) => {
+                messageAlert(false, error.response.data.message);
+            });
     };
     const onFinishFailed = (errorInfo) => {
         console.log("Failed:", errorInfo);

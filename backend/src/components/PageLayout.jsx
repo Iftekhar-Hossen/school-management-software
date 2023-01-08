@@ -1,30 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
 
-import { Link, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    AliwangwangOutlined,
     FullscreenExitOutlined,
     FullscreenOutlined,
-    AppstoreOutlined,
-    MailOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu, theme, Button } from "antd";
+import { Layout, Button } from "antd";
+import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import { sessionAction } from "../app/actions/session";
 import Menubar from "./Menubar";
 
 const { Header, Sider, Content } = Layout;
 export default function PageLayout() {
+    const { auth } = useSelector((auth) => auth);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        axios
+            .get("http://localhost:8000/v1/academic/session", {
+                headers: {
+                    token: auth.token,
+                },
+            })
+            .then((res) => {
+                const updatedObjects = res.data.data.map((obj) => {
+                    return { value: obj._id, label: obj.name };
+                });
+                dispatch(sessionAction(updatedObjects));
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
     const handle = useFullScreenHandle();
     const resetWebsite = () => {
         localStorage.clear();
     };
 
     const [collapsed, setCollapsed] = useState(false);
-    const {
-        token: { colorBgContainer },
-    } = theme.useToken();
     return (
         <FullScreen handle={handle}>
             <Layout>

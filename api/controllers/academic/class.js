@@ -48,9 +48,13 @@ exports.postClass = (req, res) => {
 exports.getClass = async(req, res) => {
    if (!req.query.hasOwnProperty("session") ) {
             res.status(400).send(response(false, "Session is missing"))
-            return false;
-        }
-    const classes = await ClassModel.find({...req.query.session})
+            return;
+    }
+    if (typeof req.query.session !== "string" || req.query.session.length < 10 ) {
+            res.status(400).send(response(false, "Invalid session id"))
+            return;
+    }
+    const classes = await ClassModel.find({session: req.query.session})
     res.status(200).send(response(true, "classes list", classes))
 
 };

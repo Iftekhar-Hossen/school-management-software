@@ -1,13 +1,18 @@
 const mongoose = require("mongoose");
 
 const StudentSchema = new mongoose.Schema({
-    name: {
+    firstName: {
         type: String,
-        required: true,
+        required: [true, "Student first name is requried"]
+
     },
+    lastName:{
+        type: String,
+        required: [true, "Student last name is requried"]
+    }
     dateOfBirth: {
         type: Number,
-        required: true,
+        required: [true, "Student birth day is requried"],
     },
     class: [
         {
@@ -23,61 +28,70 @@ const StudentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    phone: {
+    phoneNumber: {
         type: String,
-        required: true,
+        required: [true, "Student phone number is requried"],
     },
+    gender:{
+        type: String,
+        required: [true, "Student gender is required"]
+        enum: ["male", "female"]
+    },
+    religion:{
+        type: String,
+        required: [true, "Student religion is required"]
+        enum: ["islam", "hinduism", "buddhism", "christianity", "other"]
+    }
+    ,
+    bloodGroup:{
+        type: String,
+        required: [true, "Blood group is required"]
+        enum; ['a+', "a-", "b+", "b-", "o+", "o-", "ab+", "ab-"]
+    },
+
+
+    fathersName:{
+        type: String,
+        required: [true, "Student father's name is required"]
+    },
+    mothersName:{
+        type: String,
+        required: [true, "Student mother's name is required"]
+    },
+
+
+    guardianName:{
+        type: String,
+        required: [true, "Guardian name is required"]
+    },
+    guardianPhone:{
+        type: String,
+        required: [true, "Guardian phone is required"]
+    },
+    guardianEmail:{
+        type: String,
+    },
+    guardianRelation:{
+        type: String,
+        required: [true, "Guardian relation with student is required"],
+        enum: ["father", "mother", "brother", "sister", "other"]
+    },
+
+
     presentAddress: {
         type: String,
-        required: true,
+        required: [true, "Present address is required"],
     },
     permanentAddress: {
         type: String,
-        required: true,
+        required: [true, "Permanent address is required"],
     },
 
     image: {
         type: String,
     },
-    parents: {
-        father: {
-            name: {
-                type: String,
-                required: true,
-            },
-            email: {
-                type: String,
-            },
-            phone: {
-                type: String,
-                required: true,
-            },
-            occupation: {
-                type: String,
-            },
-        },
-        mother: {
-            name: {
-                type: String,
-                required: true,
-            },
-            email: {
-                type: String,
-            },
-            phone: {
-                type: String,
-                required: true,
-            },
-            occupation: {
-                type: String,
-                required: true,
-            },
-        },
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-});
+
+
+}, {timestamps: true});
 
 module.exports = mongoose.model("Student", StudentSchema);

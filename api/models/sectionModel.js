@@ -1,6 +1,9 @@
 const mongoose = require("mongoose")
 const SectionSchema = new mongoose.Schema({
-
+                class: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Class",
+                }
                 teacher: {
                     type: mongoose.Schema.Types.ObjectId,
                     ref: "Administrator",

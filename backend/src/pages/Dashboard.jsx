@@ -3,15 +3,17 @@ import React from "react";
 import { Link } from "react-router-dom";
 import PageTitle from "../components/PageTitle";
 import { Button, Col, Row, Card, Statistic } from "antd";
-import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 import { Pie } from 'react-chartjs-2';
+import { useSelector } from "react-redux";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 
 export default function Dashboard() {
+    const {session} = useSelector((session)=> session)
+    console.log(session)
 
      const incomeData = {
         labels: ['Fees', 'Admission', 'Donation', 'Canteen', 'Stationery'],
