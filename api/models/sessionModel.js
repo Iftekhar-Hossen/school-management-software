@@ -13,7 +13,6 @@ const SessionSchema = new mongoose.Schema({
     endDate: {
         type: Date,
                 required: [true, "Session ending date is required"],
-        
     },
 });
 

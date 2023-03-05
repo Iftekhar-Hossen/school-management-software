@@ -1,5 +1,16 @@
 {
-    "cSpell.words": [
-        "antd"
-    ]
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/node_modules": true,
+        "**/.gitignore": true,
+        "**/package-lock.json": true,
+        "**/package.json": true,
+        "**/tailwind.config.js": true,
+        "**/postcss.config.js": true,
+    }
 }

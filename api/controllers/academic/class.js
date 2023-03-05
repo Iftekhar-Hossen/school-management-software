@@ -1,25 +1,36 @@
-const mongooseErrorHandler = require('mongoose-error-handler');
+const mongooseErrorHandler = require("mongoose-error-handler");
 
-const ClassModel = require("../../models/ClassModel");
-const {response} = require("../../utils/responseGenerator")
+const ClassModel = require("../../models/classModel");
+const Section = require("../../models/sectionModel");
+const { response } = require("../../utils/responseGenerator");
 
 exports.postClass = (req, res) => {
     isValidClass(req.body);
     function isValidClass(obj) {
         if (typeof obj !== "object") {
-    		res.status(400).send(response(false, "Invalid data type"))
+            res.status(400).send(response(false, "Invalid data type"));
             return false;
         }
-        if (!obj.hasOwnProperty("name") || typeof obj.name !== "string" || !obj.hasOwnProperty("session") ) {
-    		res.status(400).send(response(false, "Class name is missing"))
+        if (
+            !obj.hasOwnProperty("name") ||
+            typeof obj.name !== "string" ||
+            !obj.hasOwnProperty("session")
+        ) {
+            res.status(400).send(response(false, "Class name is missing"));
             return false;
         }
-          if (!obj.hasOwnProperty("session" || typeof obj.session !== null || typeof obj.session !== "object") ) {
-            res.status(400).send(response(false, "Session type is invalid"))
+        if (
+            !obj.hasOwnProperty(
+                "session" ||
+                    typeof obj.session !== null ||
+                    typeof obj.session !== "object",
+            )
+        ) {
+            res.status(400).send(response(false, "Session type is invalid"));
             return false;
         }
         if (!obj.hasOwnProperty("sections") || !Array.isArray(obj.sections)) {
-    		res.status(400).send(response(false, "sections is missing"))
+            res.status(400).send(response(false, "sections is missing"));
             return false;
         }
         for (const section of obj.sections) {
@@ -30,31 +41,71 @@ exports.postClass = (req, res) => {
                 !section.hasOwnProperty("capacity") ||
                 typeof +section.capacity !== "number"
             ) {
-    			res.status(400).send(response(false, "Sections data structure is not valid"))
+                res.status(400).send(
+                    response(false, "Sections data structure is not valid"),
+                );
                 return false;
             }
         }
 
-    	new ClassModel(req.body).save().then((data)=>{
-        		res.status(200).send(response(true, "Class added successfully"))
-    		}).catch((error)=>{
-        		res.status(400).send(response(false, mongooseErrorHandler.set(error)))
-    		})
+        // console.log(req.body);
 
-        return true;
+        new ClassModel({ name: req.body.name, session: req.body.session })
+            .save()
+            .then((classData) => {
+                console.log(classData);
+                Section.insertMany([...req.body.sections])
+                    .then((sectionData) => {
+                        classData.sections = classData.sections.concat(
+                            sectionData.map((section) => section._id),
+                        );
+                        classData
+                            .save()
+                            .then((submitResult) => {
+                                console.log(
+                                    "🚀 ~ file: class.js:64 ~ classData.save ~ submitResult",
+                                    submitResult,
+                                );
+                            })
+                            .catch((submitError) => {
+                                console.log(
+                                    "🚀 ~ file: class.js:67 ~ classData.save ~ submitError",
+                                    submitError,
+                                );
+                            });
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            })
+            .catch((error) => {
+                res.status(400).send(
+                    response(false, mongooseErrorHandler.set(error)),
+                );
+            });
     }
 };
 
-exports.getClass = async(req, res) => {
-   if (!req.query.hasOwnProperty("session") ) {
-            res.status(400).send(response(false, "Session is missing"))
-            return;
+exports.getClass = async (req, res) => {
+    if (!req.query.hasOwnProperty("session")) {
+        res.status(400).send(response(false, "Session is missing"));
+        return;
     }
-    if (typeof req.query.session !== "string" || req.query.session.length < 10 ) {
-            res.status(400).send(response(false, "Invalid session id"))
-            return;
+    if (
+        typeof req.query.session !== "string" ||
+        req.query.session.length < 10
+    ) {
+        res.status(400).send(response(false, "Invalid session id"));
+        return;
     }
-    const classes = await ClassModel.find({session: req.query.session})
-    res.status(200).send(response(true, "classes list", classes))
 
+    ClassModel.find({ session: req.query.session })
+        .populate({
+            path: "sections",
+            select: "name capacity",
+        })
+        .exec(function (err, classDoc) {
+            if (err) return handleError(err);
+            res.status(200).send(response(true, "classes list", classDoc));
+        });
 };

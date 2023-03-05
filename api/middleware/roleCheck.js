@@ -1,7 +1,6 @@
 const Administrator = require("../models/administratorModel");
 
 exports.isAdmin = async (req, res, next) => {
-    console.log(req.body)
     let administrator = await Administrator.findOne({
         _id: res.locals.objectId,
     });
