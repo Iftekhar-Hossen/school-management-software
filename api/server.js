@@ -33,14 +33,12 @@ app.get("/status", (req, res) => {
     });
 });
 
-app.get("/v1/hi", (req, res) => res.send("Hi"));
+app.get("/", (req, res)=>{
+    
+})
 
 // server
 app.listen(PORT, () => {
     console.log(`listening on port ${PORT}`);
 });
 
-app.get("download", (req, res) => {
-    // res.download("/upload/photo.avif")
-    res.send({ asd: "asdf" });
-});
